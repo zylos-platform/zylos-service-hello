@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: zylos-hello-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  server:
+    port: 9000
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  info:
+    git:
+      mode: full
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  opentelemetry:
+    resource-attributes:
+      service.name: ${spring.application.name}
+      service.version: ${app.version:unknown}
+      deployment.environment: ${spring.profiles.active}
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://opentelemetry-collector.observability.svc.cluster.local:4318/v1/traces}
+  otlp:
+    metrics:
+      export:
+        enabled: true
+        url: ${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:http://opentelemetry-collector.observability.svc.cluster.local:4318/v1/metrics}
+
+app:
+  version: "@project.version@"
+
+logging:
+  level:
+    root: INFO
+    app.zylos: DEBUG

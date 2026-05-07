@@ -31,7 +31,7 @@
   </scm>
 
   <properties>
-    <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
+    <jib-maven-plugin.version>3.5.1</jib-maven-plugin.version>
     <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
     <env.GITHUB_REPOSITORY>local-dev/untracked-repo</env.GITHUB_REPOSITORY>
     <git.commit.id.full>local-untracked-commit</git.commit.id.full>
@@ -72,6 +72,19 @@
     </dependency>
   </dependencies>
 
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/zylos-platform/zylos-service-parent</url>
+    </repository>
+  </repositories>
+
   <build>
     <plugins>
       <plugin>
@@ -87,7 +100,7 @@
         <configuration>
           <from>
             <!-- Distroless Java 25, non-root user (UID 65532) -->
-            <image>gcr.io/distroless/java25-debian12:nonroot</image>
+            <image>gcr.io/distroless/java25-debian13:nonroot</image>
           </from>
           <to>
             <!-- Override at command-line: -Djib.to.image=ghcr.io/.../zylos-hello-service -->
@@ -115,7 +128,6 @@
               <org.opencontainers.image.description>${project.description}</org.opencontainers.image.description>
             </labels>
             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-            <filesModificationTime>USE_CURRENT_TIMESTAMP</filesModificationTime>
           </container>
         </configuration>
       </plugin>

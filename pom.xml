@@ -100,7 +100,7 @@
         <configuration>
           <from>
             <!-- Distroless Java 25, non-root user (UID 65532) -->
-            <image>gcr.io/distroless/java25-debian12:nonroot</image>
+            <image>gcr.io/distroless/java25-debian13:nonroot</image>
           </from>
           <to>
             <!-- Override at command-line: -Djib.to.image=ghcr.io/.../zylos-hello-service -->

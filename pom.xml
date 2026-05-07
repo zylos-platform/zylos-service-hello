@@ -128,7 +128,6 @@
               <org.opencontainers.image.description>${project.description}</org.opencontainers.image.description>
             </labels>
             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-            <filesModificationTime>USE_CURRENT_TIMESTAMP</filesModificationTime>
           </container>
         </configuration>
       </plugin>

@@ -31,7 +31,7 @@
   </scm>
 
   <properties>
-    <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
+    <jib-maven-plugin.version>3.5.1</jib-maven-plugin.version>
     <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
     <env.GITHUB_REPOSITORY>local-dev/untracked-repo</env.GITHUB_REPOSITORY>
     <git.commit.id.full>local-untracked-commit</git.commit.id.full>

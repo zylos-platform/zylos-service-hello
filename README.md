@@ -1,1 +1,1 @@
-# zylos-hello-service
+# zylos-service-hello

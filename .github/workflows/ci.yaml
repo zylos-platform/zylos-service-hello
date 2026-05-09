@@ -19,7 +19,7 @@ jobs:
       security-events: write
     uses: zylos-platform/zylos-service-parent/.github/workflows/reusable-build-and-publish.yaml@main
     with:
-      service-name: zylos-hello-service
+      service-name: zylos-service-hello
       java-version: "25"
       coverage-threshold: "0.70"
       open-deploy-pr: true

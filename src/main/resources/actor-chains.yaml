@@ -1,0 +1,20 @@
+###############################################################################
+# Actor-chain policy for zylos-service-hello.
+#
+# The greeting endpoint is chain-sensitive: it is reachable only through the
+# gateway (delegation chain == [zylos-gateway]). A token without that actor
+# chain — e.g. a direct call bypassing the gateway — is denied 403.
+#
+# A typical non-sensitive endpoint would set chainSensitive: false (or be
+# omitted, since the standard default permits any authenticated caller).
+###############################################################################
+defaults:
+  rejectIfNoPathMatch: false
+  allowEmptyChain: false
+  maxChainDepth: 5
+
+endpoints:
+  - pathPattern: /api/v1/greeting
+    chainSensitive: true
+    permittedChains:
+      - [ zylos-gateway ]

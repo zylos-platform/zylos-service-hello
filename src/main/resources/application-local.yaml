@@ -1,4 +1,14 @@
 # Local development profile — no OTel collector required, simpler logging
+
+zylos:
+  security:
+    issuer-uri: ${ZYLOS_ISSUER_URI:http://localhost:8080/realms/zylos}
+    expected-audience: zylos-internal-hello
+    actor-chains:
+      # Local dev calls the service directly (no gateway), so there is no
+      # act claim. Disable chain enforcement locally; prod keeps it on.
+      enabled: false
+
 management:
   opentelemetry:
     tracing:

@@ -8,6 +8,13 @@ server:
   port: 8080
   shutdown: graceful
 
+zylos:
+  security:
+    issuer-uri: ${ZYLOS_ISSUER_URI:http://keycloak.zylos.local/realms/zylos}
+    expected-audience: zylos-internal-hello
+    actor-chains:
+      enabled: true
+
 management:
   server:
     port: 9000

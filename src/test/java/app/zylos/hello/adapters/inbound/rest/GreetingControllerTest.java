@@ -1,26 +1,52 @@
 package app.zylos.hello.adapters.inbound.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
+
+import app.zylos.hello.support.AbstractOidcStubbedTest;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class GreetingControllerTest {
+class GreetingControllerTest extends AbstractOidcStubbedTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * A JWT whose actor chain is [zylos-gateway], as produced by gateway exchange.
+     */
+    private static JwtRequestPostProcessor gatewayDelegated() {
+        return jwt().jwt(builder ->
+                builder.audience(List.of("zylos-internal-hello")).claim("act", Map.of("client_id", "zylos-gateway")));
+    }
+
     @Test
-    void greetingDefaultsToWorld() throws Exception {
-        mockMvc.perform(get("/api/v1/greeting"))
+    void greetingRequiresAuthentication() throws Exception {
+        mockMvc.perform(get("/api/v1/greeting")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void greetingDeniedWithoutGatewayActorChain() throws Exception {
+        // Authenticated but no act claim → chain-sensitive endpoint denies (403).
+        mockMvc.perform(get("/api/v1/greeting").with(jwt())).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void greetingPermittedWhenDelegatedByGateway() throws Exception {
+        mockMvc.perform(get("/api/v1/greeting").with(gatewayDelegated()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", containsString("Hello from Zylos")))
                 .andExpect(jsonPath("$.version").exists())
@@ -28,8 +54,8 @@ class GreetingControllerTest {
     }
 
     @Test
-    void greetingAcceptsName() throws Exception {
-        mockMvc.perform(get("/api/v1/greeting").param("name", "alice"))
+    void greetingAcceptsNameWhenDelegatedByGateway() throws Exception {
+        mockMvc.perform(get("/api/v1/greeting").param("name", "alice").with(gatewayDelegated()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", containsString("alice")));
     }

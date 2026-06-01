@@ -1,8 +1,13 @@
 package app.zylos.hello.integration;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -11,13 +16,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 
 /**
  * The full-slice end-to-end proof: a real custom Keycloak (with the
@@ -43,9 +45,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FullSliceSecurityIT {
 
     @Container
-    static final KeycloakContainer KEYCLOAK =
-        new KeycloakContainer("ghcr.io/zylos-platform/keycloak:26.6.1-zylos-act-0.1.0")
+    static final KeycloakContainer KEYCLOAK = new KeycloakContainer(
+                    "ghcr.io/zylos-platform/keycloak:26.6.1-zylos-act-0.1.0")
             .withRealmImportFile("/zylos-fullslice-realm.json");
+
     private static final String REALM = "zylos-fullslice";
     private static final String GATEWAY = "zylos-gateway";
     private static final String GATEWAY_SECRET = "dev-secret-gateway";
@@ -53,6 +56,7 @@ class FullSliceSecurityIT {
     private static final String HELLO_SECRET = "dev-secret-hello";
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final HttpClient HTTP = HttpClient.newHttpClient();
+
     @LocalServerPort
     int port;
 
@@ -76,25 +80,25 @@ class FullSliceSecurityIT {
 
     @SuppressWarnings("SameParameterValue")
     private static String exchange(String client, String secret, String subjectToken, String audience)
-        throws Exception {
+            throws Exception {
         String tokenType = "urn:ietf:params:oauth:token-type:access_token";
         String grantType = "urn:ietf:params:oauth:grant-type:token-exchange";
 
         String form = "grant_type=" + grantType
-            + "&client_id=" + client
-            + "&client_secret=" + secret
-            + "&subject_token=" + subjectToken
-            + "&subject_token_type=" + tokenType
-            + "&audience=" + audience
-            + "&scope=hello-exchange-scope";
+                + "&client_id=" + client
+                + "&client_secret=" + secret
+                + "&subject_token=" + subjectToken
+                + "&subject_token_type=" + tokenType
+                + "&audience=" + audience
+                + "&scope=hello-exchange-scope";
         return postToken(form);
     }
 
     private static String postToken(String form) throws Exception {
         HttpRequest request = HttpRequest.newBuilder(tokenEndpoint())
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .POST(HttpRequest.BodyPublishers.ofString(form, StandardCharsets.UTF_8))
-            .build();
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(form, StandardCharsets.UTF_8))
+                .build();
         HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) {
             throw new IllegalStateException("Token request failed (" + response.statusCode() + "): " + response.body());
@@ -150,9 +154,9 @@ class FullSliceSecurityIT {
 
     private HttpResponse<String> callGreeting(String token) throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/greeting"))
-            .header("Authorization", "Bearer " + token)
-            .GET()
-            .build();
+                .header("Authorization", "Bearer " + token)
+                .GET()
+                .build();
         return HTTP.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

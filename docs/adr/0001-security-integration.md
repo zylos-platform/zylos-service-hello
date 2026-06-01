@@ -57,8 +57,15 @@ directly (no gateway, no `act`), so `application-local.yaml` sets
 
 ## Verification
 
-- Unit/slice tests: unauthenticated → 401; authenticated without `act` → 403;
-  gateway-delegated (`act = zylos-gateway`) → 200.
+- **Unit/slice** (`GreetingControllerTest`, OIDC-stubbed): unauthenticated →
+  401; authenticated without `act` → 403; gateway-delegated (`act = zylos-gateway`)
+  → 200.
+- **Full slice** (`FullSliceSecurityIT`, real custom Keycloak via Testcontainers):
+  a real RFC 8693 exchange (gateway → hello) yields a token whose `act.client_id`
+  is genuinely `zylos-gateway`; the running service permits it (200), denies a
+  direct un-delegated token (403), and rejects a wrong-audience token (401). This
+  is the end-to-end proof that the ActClaimMapper's real `act` output and the
+  starter's extractor/matcher agree against real Keycloak.
 
 ## References
 

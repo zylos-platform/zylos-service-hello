@@ -5,8 +5,31 @@
   "accessTokenLifespan": 300,
   "clientScopes": [
     {
-      "name": "hello-exchange-scope",
+      "name": "zylos-actor",
       "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "zylos-act-claim",
+          "protocol": "openid-connect",
+          "protocolMapper": "zylos-act-claim-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "name": "hello-aud",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false"
+      },
       "protocolMappers": [
         {
           "name": "hello-audience",
@@ -17,17 +40,6 @@
             "included.client.audience": "zylos-internal-hello",
             "access.token.claim": "true",
             "id.token.claim": "false"
-          }
-        },
-        {
-          "name": "zylos-act-claim",
-          "protocol": "openid-connect",
-          "protocolMapper": "zylos-act-claim-mapper",
-          "consentRequired": false,
-          "config": {
-            "access.token.claim": "true",
-            "id.token.claim": "false",
-            "userinfo.token.claim": "false"
           }
         }
       ]
@@ -51,10 +63,11 @@
       },
       "defaultClientScopes": [
         "acr",
-        "roles"
+        "roles",
+        "zylos-actor"
       ],
       "optionalClientScopes": [
-        "hello-exchange-scope"
+        "hello-aud"
       ]
     },
     {

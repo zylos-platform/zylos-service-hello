@@ -90,7 +90,7 @@ class FullSliceSecurityIT {
                 + "&subject_token=" + subjectToken
                 + "&subject_token_type=" + tokenType
                 + "&audience=" + audience
-                + "&scope=hello-exchange-scope";
+                + "&scope=hello-aud";
         return postToken(form);
     }
 

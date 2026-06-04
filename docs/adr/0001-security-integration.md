@@ -67,6 +67,12 @@ directly (no gateway, no `act`), so `application-local.yaml` sets
   is the end-to-end proof that the ActClaimMapper's real `act` output and the
   starter's extractor/matcher agree against real Keycloak.
 
+- **Claim model:** the full-slice realm mirrors production — `act` from a
+  shared `zylos-actor` default scope on the calling client, `aud` from a
+  `hello-aud` optional scope requested via `&scope` on exchange. The target
+  client carries a self-audience mapper in the test realm only (to exercise the
+  direct-token 403 path); production omits it.
+
 ## References
 
 - starter ADR 0002 (JWT), 0003 (actor chains)

@@ -37,7 +37,7 @@ public class HelloSecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http, ActorChainAuthorizationManager actorChainAuthorizationManager) {
         return http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/**")
+                        .requestMatchers("/api/v1/hello/**")
                         .access(actorChainAuthorizationManager)
                         .anyRequest()
                         .authenticated())

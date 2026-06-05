@@ -153,7 +153,7 @@ class FullSliceSecurityIT {
     }
 
     private HttpResponse<String> callGreeting(String token) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/greeting"))
+        HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/hello/me"))
                 .header("Authorization", "Bearer " + token)
                 .GET()
                 .build();

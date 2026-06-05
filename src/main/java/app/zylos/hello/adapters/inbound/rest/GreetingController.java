@@ -9,7 +9,7 @@ import app.zylos.hello.application.GreetingService;
 import app.zylos.hello.domain.Greeting;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/hello")
 public class GreetingController {
 
     private final GreetingService service;
@@ -18,7 +18,7 @@ public class GreetingController {
         this.service = service;
     }
 
-    @GetMapping("/greeting")
+    @GetMapping("/me")
     public Greeting greeting(@RequestParam(required = false, defaultValue = "world") String name) {
         return service.greet(name);
     }

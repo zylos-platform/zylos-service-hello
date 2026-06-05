@@ -35,18 +35,18 @@ class GreetingControllerTest extends AbstractOidcStubbedTest {
 
     @Test
     void greetingRequiresAuthentication() throws Exception {
-        mockMvc.perform(get("/api/v1/greeting")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/hello/me")).andExpect(status().isUnauthorized());
     }
 
     @Test
     void greetingDeniedWithoutGatewayActorChain() throws Exception {
         // Authenticated but no act claim → chain-sensitive endpoint denies (403).
-        mockMvc.perform(get("/api/v1/greeting").with(jwt())).andExpect(status().isForbidden());
+        mockMvc.perform(get("/api/v1/hello/me").with(jwt())).andExpect(status().isForbidden());
     }
 
     @Test
     void greetingPermittedWhenDelegatedByGateway() throws Exception {
-        mockMvc.perform(get("/api/v1/greeting").with(gatewayDelegated()))
+        mockMvc.perform(get("/api/v1/hello/me").with(gatewayDelegated()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", containsString("Hello from Zylos")))
                 .andExpect(jsonPath("$.version").exists())
@@ -55,7 +55,7 @@ class GreetingControllerTest extends AbstractOidcStubbedTest {
 
     @Test
     void greetingAcceptsNameWhenDelegatedByGateway() throws Exception {
-        mockMvc.perform(get("/api/v1/greeting").param("name", "alice").with(gatewayDelegated()))
+        mockMvc.perform(get("/api/v1/hello/me").param("name", "alice").with(gatewayDelegated()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", containsString("alice")));
     }

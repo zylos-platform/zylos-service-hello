@@ -14,7 +14,7 @@ defaults:
   maxChainDepth: 5
 
 endpoints:
-  - pathPattern: /api/v1/greeting
+  - pathPattern: /api/v1/hello/me
     chainSensitive: true
     permittedChains:
       - [ zylos-gateway ]

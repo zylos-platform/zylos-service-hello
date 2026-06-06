@@ -63,6 +63,9 @@ class FullSliceSecurityIT {
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
         registry.add("zylos.security.issuer-uri", () -> KEYCLOAK.getAuthServerUrl() + "/realms/" + REALM);
+        registry.add(
+                "zylos.security.jwk-set-uri",
+                () -> KEYCLOAK.getAuthServerUrl() + "/realms/" + REALM + "/protocol/openid-connect/certs");
         registry.add("zylos.security.expected-audience", () -> HELLO);
         registry.add("zylos.security.actor-chains.enabled", () -> "true");
     }

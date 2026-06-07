@@ -1,7 +1,9 @@
 package app.zylos.hello.config;
 
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,6 +36,17 @@ import app.zylos.security.actor.ActorChainAuthorizationManager;
 public class HelloSecurityConfig {
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) {
+        return http.securityMatcher(EndpointRequest.toAnyEndpoint())
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http, ActorChainAuthorizationManager actorChainAuthorizationManager) {
         return http.authorizeHttpRequests(authorize -> authorize

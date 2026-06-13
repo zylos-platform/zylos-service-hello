@@ -9,15 +9,19 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import app.zylos.security.opa.OpaClient;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 
@@ -69,6 +73,9 @@ class FullSliceSecurityIT {
         registry.add("zylos.security.expected-audience", () -> HELLO);
         registry.add("zylos.security.actor-chains.enabled", () -> "true");
     }
+
+    @MockitoBean
+    private OpaClient opaClient;
 
     // --- helpers -----------------------------------------------------------
 
@@ -124,6 +131,7 @@ class FullSliceSecurityIT {
         // Sanity: the exchanged token really carries act.client_id = zylos-gateway.
         assertThat(claim(exchanged, "act").get("client_id").asText()).isEqualTo(GATEWAY);
 
+        Mockito.when(opaClient.check(Mockito.anyString(), Mockito.any())).thenReturn(true);
         HttpResponse<String> response = callGreeting(exchanged);
 
         assertThat(response.statusCode()).isEqualTo(200);

@@ -10,13 +10,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import app.zylos.hello.support.AbstractOidcStubbedTest;
+import app.zylos.security.opa.OpaClient;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,6 +27,9 @@ class GreetingControllerTest extends AbstractOidcStubbedTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private OpaClient opaClient;
 
     /**
      * A JWT whose actor chain is [zylos-gateway], as produced by gateway exchange.
@@ -46,6 +52,8 @@ class GreetingControllerTest extends AbstractOidcStubbedTest {
 
     @Test
     void greetingPermittedWhenDelegatedByGateway() throws Exception {
+        Mockito.when(opaClient.check(Mockito.anyString(), Mockito.any())).thenReturn(true);
+
         mockMvc.perform(get("/api/v1/hello/me").with(gatewayDelegated()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", containsString("Hello from Zylos")))
@@ -55,6 +63,8 @@ class GreetingControllerTest extends AbstractOidcStubbedTest {
 
     @Test
     void greetingAcceptsNameWhenDelegatedByGateway() throws Exception {
+        Mockito.when(opaClient.check(Mockito.anyString(), Mockito.any())).thenReturn(true);
+
         mockMvc.perform(get("/api/v1/hello/me").param("name", "alice").with(gatewayDelegated()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", containsString("alice")));

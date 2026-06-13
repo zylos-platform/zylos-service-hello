@@ -15,6 +15,11 @@ zylos:
     expected-audience: zylos-internal-hello
     actor-chains:
       enabled: true
+    # Fine-grained authorization via centralized OPA. Active only when an endpoint
+    # is set (deployed envs set ZYLOS_SECURITY_OPA_ENDPOINT). Left unset locally and
+    # in slice tests so those paths run without OPA.
+    # opa:
+    #   endpoint: http://opa.opa.svc.cluster.local:8181
 
 management:
   server:

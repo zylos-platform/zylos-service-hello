@@ -8,6 +8,8 @@ zylos:
       # Local dev calls the service directly (no gateway), so there is no
       # act claim. Disable chain enforcement locally; prod keeps it on.
       enabled: false
+    opa:
+      endpoint: http://localhost:8181
 
 management:
   opentelemetry:
